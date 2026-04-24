@@ -305,4 +305,5 @@ This project demonstrates:
 ---
 
 **Author:** Hemanth
+<br>
 **Type:** Frontend Prototype
