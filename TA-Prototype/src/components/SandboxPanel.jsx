@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { useStore } from "../store";
-import { simulateWorkflow } from "../api";
+import { useState }          from "react";
+import { useStore }          from "../store";
+import { simulateWorkflow }  from "../api";
 
 const TYPE_LABELS = {
   start:     "Start",
@@ -10,46 +10,69 @@ const TYPE_LABELS = {
   end:       "End",
 };
 
-const STATUS_COLORS = {
-  success: { bg: "#f0fdf4", border: "#86efac", text: "#15803d", dot: "#16a34a" },
-  error:   { bg: "#fef2f2", border: "#fca5a5", text: "#dc2626", dot: "#dc2626" },
-};
-
-function StatusDot({ status }) {
-  const c = STATUS_COLORS[status] || STATUS_COLORS.success;
+function CheckIcon({ color }) {
   return (
-    <div style={{
-      width: 20,
-      height: 20,
-      borderRadius: "50%",
-      background: c.bg,
-      border: `1px solid ${c.border}`,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexShrink: 0,
-      marginTop: 1,
-    }}>
-      {status === "error"
-        ? <svg width="8" height="8" viewBox="0 0 12 12"><path d="M2 2l8 8M10 2l-8 8" stroke={c.dot} strokeWidth="2" strokeLinecap="round"/></svg>
-        : <svg width="8" height="8" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke={c.dot} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
-      }
+    <svg width="8" height="8" viewBox="0 0 12 12" fill="none">
+      <path d="M2 6l3 3 5-5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CrossIcon({ color }) {
+  return (
+    <svg width="8" height="8" viewBox="0 0 12 12" fill="none">
+      <path d="M2 2l8 8M10 2l-8 8" stroke={color} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
+      <polygon points="5 3 19 12 5 21 5 3" />
+    </svg>
+  );
+}
+
+function StepRow({ log }) {
+  const isSuccess = log.status !== "error";
+
+  return (
+    <div className="step-row">
+      <div className={`step-status-dot ${isSuccess ? "success" : "error"}`}>
+        {isSuccess
+          ? <CheckIcon color="#16a34a" />
+          : <CrossIcon color="#dc2626" />
+        }
+      </div>
+      <div>
+        <div className="step-label">
+          {log.label || log.type}
+          {log.type && (
+            <span className="step-type-badge">
+              {TYPE_LABELS[log.type] || log.type}
+            </span>
+          )}
+        </div>
+        <p className="step-message">{log.message}</p>
+      </div>
     </div>
   );
 }
 
 export default function SandboxPanel() {
   const { nodes, edges, validateWorkflow } = useStore();
-  const [logs, setLogs]       = useState([]);
+  const [logs,    setLogs]    = useState([]);
   const [loading, setLoading] = useState(false);
-  const [valid, setValid]     = useState(null);
-  const [tab, setTab]         = useState("log");
+  const [valid,   setValid]   = useState(null);
+  const [tab,     setTab]     = useState("log");
 
   const run = async () => {
     const error = validateWorkflow();
+
     if (error) {
       setValid(false);
-      setLogs([{ message: error, status: "error", label: "Validation Error", type: "start" }]);
+      setLogs([{ message: error, status: "error", label: "Validation Error", type: null }]);
       return;
     }
 
@@ -63,217 +86,86 @@ export default function SandboxPanel() {
     setLoading(false);
   };
 
-  const json = JSON.stringify(
+  const jsonPayload = JSON.stringify(
     { nodes: nodes.map((n) => ({ id: n.id, type: n.type, data: n.data })), edges },
-    null, 2
-  );
-
-  const tabBtn = (key, label) => (
-    <button
-      key={key}
-      onClick={() => setTab(key)}
-      style={{
-        background: "none",
-        border: "none",
-        borderBottom: tab === key ? "2px solid #4f46e5" : "2px solid transparent",
-        color: tab === key ? "#4f46e5" : "#9ca3af",
-        padding: "8px 12px",
-        cursor: "pointer",
-        fontSize: 10,
-        fontWeight: 700,
-        textTransform: "uppercase",
-        letterSpacing: "0.07em",
-        fontFamily: "inherit",
-        transition: "color 0.1s",
-      }}
-    >
-      {label}
-    </button>
+    null,
+    2
   );
 
   return (
-    <div style={{
-      flex: 1,
-      display: "flex",
-      flexDirection: "column",
-      minHeight: 0,
-      overflow: "hidden",
-    }}>
+    <div className="sandbox-panel">
 
-      {/* Header row */}
-      <div style={{
-        padding: "12px 14px 0",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: "#111827", letterSpacing: "0.01em" }}>
-          Simulation
-        </span>
+      <div className="sandbox-header">
+        <span className="sandbox-title">Simulation</span>
         <button
+          className="btn btn-primary"
           onClick={run}
           disabled={loading}
-          style={{
-            background: loading ? "#c7d2fe" : "#4f46e5",
-            border: "none",
-            borderRadius: 6,
-            padding: "6px 14px",
-            color: "#fff",
-            cursor: loading ? "not-allowed" : "pointer",
-            fontSize: 11,
-            fontWeight: 700,
-            fontFamily: "inherit",
-            letterSpacing: "0.02em",
-            transition: "background 0.15s",
-          }}
         >
           {loading ? "Running…" : "Run"}
         </button>
       </div>
 
-      {/* Tabs */}
-      <div style={{
-        display: "flex",
-        borderBottom: "1px solid #e5e7eb",
-        padding: "0 14px",
-        marginTop: 4,
-      }}>
-        {tabBtn("log", "Execution Log")}
-        {tabBtn("json", "JSON")}
+      <div className="sandbox-tabs">
+        <button
+          className={`sandbox-tab ${tab === "log" ? "active" : ""}`}
+          onClick={() => setTab("log")}
+        >
+          Execution Log
+        </button>
+        <button
+          className={`sandbox-tab ${tab === "json" ? "active" : ""}`}
+          onClick={() => setTab("json")}
+        >
+          JSON
+        </button>
       </div>
 
-      {/* Content area */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "12px 14px" }}>
-        {tab === "json" ? (
-          <pre style={{
-            background: "#f9fafb",
-            borderRadius: 7,
-            padding: "10px 12px",
-            margin: 0,
-            fontSize: 10,
-            overflowX: "auto",
-            lineHeight: 1.7,
-            border: "1px solid #e5e7eb",
-            color: "#374151",
-            fontFamily: "'Fira Code', 'Courier New', monospace",
-          }}>
-            {json}
-          </pre>
-        ) : (
+      <div className="sandbox-content">
+
+        {/* JSON view */}
+        {tab === "json" && (
+          <pre className="sandbox-json">{jsonPayload}</pre>
+        )}
+
+        {/* Log view */}
+        {tab === "log" && (
           <>
             {/* Empty state */}
             {!loading && logs.length === 0 && (
-              <div style={{
-                textAlign: "center",
-                color: "#9ca3af",
-                padding: "32px 0",
-              }}>
-                <div style={{
-                  width: 36,
-                  height: 36,
-                  background: "#f3f4f6",
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "0 auto 12px",
-                }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2">
-                    <polygon points="5 3 19 12 5 21 5 3"/>
-                  </svg>
+              <div className="sandbox-empty">
+                <div className="sandbox-empty-icon">
+                  <PlayIcon />
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#6b7280", marginBottom: 4 }}>
-                  Ready to simulate
-                </div>
-                <div style={{ fontSize: 11, lineHeight: 1.6 }}>
+                <p className="sandbox-empty-title">Ready to simulate</p>
+                <p className="sandbox-empty-hint">
                   Click Run to validate and<br />execute the workflow.
-                </div>
+                </p>
               </div>
             )}
 
-            {/* Loading */}
+            {/* Loading state */}
             {loading && (
-              <div style={{
-                textAlign: "center",
-                color: "#4f46e5",
-                padding: "32px 0",
-                fontSize: 12,
-              }}>
-                Simulating workflow…
-              </div>
+              <p className="sandbox-loading">Simulating workflow…</p>
             )}
 
             {/* Results */}
             {!loading && logs.length > 0 && (
               <>
-                {/* Summary banner */}
-                <div style={{
-                  background: valid ? "#f0fdf4" : "#fef2f2",
-                  border: `1px solid ${valid ? "#86efac" : "#fca5a5"}`,
-                  borderRadius: 7,
-                  padding: "8px 12px",
-                  marginBottom: 12,
-                  fontSize: 11,
-                  color: valid ? "#15803d" : "#dc2626",
-                  fontWeight: 700,
-                }}>
+                <div className={`sandbox-banner ${valid ? "success" : "error"}`}>
                   {valid
                     ? `Executed ${logs.length} step${logs.length !== 1 ? "s" : ""} successfully.`
-                    : `${logs.length} validation error${logs.length !== 1 ? "s" : ""} detected.`}
+                    : `${logs.length} validation error${logs.length !== 1 ? "s" : ""} detected.`
+                  }
                 </div>
-
-                {/* Step rows */}
                 {logs.map((log, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      display: "flex",
-                      gap: 10,
-                      padding: "9px 0",
-                      borderBottom: "1px solid #f3f4f6",
-                    }}
-                  >
-                    <StatusDot status={log.status} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{
-                        fontWeight: 700,
-                        color: "#111827",
-                        fontSize: 11,
-                        marginBottom: 2,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 6,
-                      }}>
-                        {log.label || log.type}
-                        {log.type && (
-                          <span style={{
-                            fontSize: 9,
-                            fontWeight: 700,
-                            color: "#9ca3af",
-                            textTransform: "uppercase",
-                            letterSpacing: "0.06em",
-                            background: "#f3f4f6",
-                            padding: "1px 5px",
-                            borderRadius: 4,
-                          }}>
-                            {TYPE_LABELS[log.type] || log.type}
-                          </span>
-                        )}
-                      </div>
-                      <div style={{
-                        color: "#6b7280",
-                        fontSize: 11,
-                        lineHeight: 1.5,
-                      }}>
-                        {log.message}
-                      </div>
-                    </div>
-                  </div>
+                  <StepRow key={i} log={log} />
                 ))}
               </>
             )}
           </>
         )}
+
       </div>
     </div>
   );

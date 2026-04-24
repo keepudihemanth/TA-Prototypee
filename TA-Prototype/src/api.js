@@ -34,11 +34,11 @@ export const simulateWorkflow = async ({ nodes, edges }) => {
   const steps = order.map((n) => {
     const d = n.data || {};
     const messages = {
-      start:     `▶  Workflow started — "${d.title || "Start"}"${d.metadata?.length ? ` · ${d.metadata.length} metadata key(s)` : ""}`,
-      task:      `📋 Task "${d.title || "Untitled"}" assigned to ${d.assignee || "unassigned"}${d.dueDate ? ` · Due ${d.dueDate}` : ""}`,
-      approval:  `✅ Approval "${d.title || "Approval"}" sent to ${d.approverRole || "approver"}${d.autoApproveThreshold > 0 ? ` · Auto-approve after ${d.autoApproveThreshold}d` : ""}`,
-      automated: `⚡ Action "${d.actionId || "none"}" triggered for "${d.title || "Automated Step"}"`,
-      end:       `⏹  Workflow ended — ${d.endMessage || "Complete"}${d.showSummary ? " · Summary report enabled" : ""}`,
+      start:     `  Workflow started — "${d.title || "Start"}"${d.metadata?.length ? ` · ${d.metadata.length} metadata key(s)` : ""}`,
+      task:      ` Task "${d.title || "Untitled"}" assigned to ${d.assignee || "unassigned"}${d.dueDate ? ` · Due ${d.dueDate}` : ""}`,
+      approval:  ` Approval "${d.title || "Approval"}" sent to ${d.approverRole || "approver"}${d.autoApproveThreshold > 0 ? ` · Auto-approve after ${d.autoApproveThreshold}d` : ""}`,
+      automated: ` Action "${d.actionId || "none"}" triggered for "${d.title || "Automated Step"}"`,
+      end:       `  Workflow ended — ${d.endMessage || "Complete"}${d.showSummary ? " · Summary report enabled" : ""}`,
     };
     return {
       nodeId:  n.id,

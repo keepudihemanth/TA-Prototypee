@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import { useRef, useCallback }  from "react";
 import ReactFlow, {
   addEdge,
   applyNodeChanges,
@@ -13,7 +13,6 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import { useStore } from "../store";
 
-// ── Design tokens ─────────────────────────────────────────────────────────────
 
 const ACCENT = {
   start:     "#16a34a",
@@ -31,26 +30,29 @@ const TYPE_LABELS = {
   end:       "End",
 };
 
-// ── Shared node shell ─────────────────────────────────────────────────────────
+const DEFAULT_DATA = {
+  start:     { title: "Start",          metadata: [] },
+  task:      { title: "New Task",        description: "", assignee: "", dueDate: "", customFields: [] },
+  approval:  { title: "Approval",        approverRole: "", autoApproveThreshold: 0 },
+  automated: { title: "Automated Step",  actionId: "", params: {} },
+  end:       { title: "End",             endMessage: "Workflow completed.", showSummary: false },
+};
+
+let nodeCounter = 100;
+
+/*Shared node shell  */
 
 function NodeShell({ type, title, meta, selected, hasInput = true, hasOutput = true }) {
   const color = ACCENT[type] || "#6b7280";
-  const typeLabel = TYPE_LABELS[type] || type;
 
   return (
-    <div style={{
-      background: "#fff",
-      borderRadius: 10,
-      border: selected ? `2px solid ${color}` : "1px solid #e5e7eb",
-      boxShadow: selected
-        ? `0 0 0 3px ${color}22, 0 4px 16px rgba(0,0,0,0.1)`
-        : "0 1px 6px rgba(0,0,0,0.07)",
-      fontSize: 12,
-      minWidth: 170,
-      maxWidth: 220,
-      fontFamily: "inherit",
-      transition: "box-shadow 0.15s, border-color 0.15s",
-    }}>
+    <div
+      className={`workflow-node ${selected ? "selected" : ""}`}
+      style={selected ? {
+        borderColor: color,
+        boxShadow: `0 0 0 3px ${color}22, 0 4px 16px rgba(0,0,0,0.1)`,
+      } : {}}
+    >
       {hasInput && (
         <Handle
           type="target"
@@ -65,54 +67,20 @@ function NodeShell({ type, title, meta, selected, hasInput = true, hasOutput = t
         />
       )}
 
-      {/* Type bar */}
-      <div style={{
-        background: `${color}14`,
-        borderBottom: `1px solid ${color}28`,
-        borderRadius: "9px 9px 0 0",
-        padding: "6px 10px",
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-      }}>
-        <div style={{
-          width: 6,
-          height: 6,
-          borderRadius: "50%",
-          background: color,
-          flexShrink: 0,
-        }} />
-        <span style={{
-          fontSize: 9,
-          fontWeight: 700,
-          color,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-        }}>
-          {typeLabel}
-        </span>
+      <div
+        className="node-type-bar"
+        style={{
+          background: `${color}14`,
+          borderBottom: `1px solid ${color}28`,
+        }}
+      >
+        <span className="node-type-dot" style={{ background: color }} />
+        <span className="node-type-label" style={{ color }}>{TYPE_LABELS[type]}</span>
       </div>
 
-      {/* Body */}
-      <div style={{ padding: "9px 11px 11px" }}>
-        <div style={{
-          fontWeight: 700,
-          color: "#111827",
-          fontSize: 13,
-          lineHeight: 1.3,
-          marginBottom: meta ? 4 : 0,
-        }}>
-          {title}
-        </div>
-        {meta && (
-          <div style={{
-            fontSize: 10,
-            color: "#6b7280",
-            lineHeight: 1.5,
-          }}>
-            {meta}
-          </div>
-        )}
+      <div className="node-body">
+        <p className={`node-title ${meta ? "has-meta" : ""}`}>{title}</p>
+        {meta && <p className="node-meta">{meta}</p>}
       </div>
 
       {hasOutput && (
@@ -132,84 +100,55 @@ function NodeShell({ type, title, meta, selected, hasInput = true, hasOutput = t
   );
 }
 
-// ── Node type components ──────────────────────────────────────────────────────
+/* Individual node components  */
 
-const StartNode = ({ data, selected }) => (
-  <NodeShell
-    type="start"
-    title={data.title || "Start"}
-    meta={data.metadata?.length ? `${data.metadata.length} metadata key(s) attached` : null}
-    selected={selected}
-    hasInput={false}
-  />
-);
+function StartNode({ data, selected }) {
+  const meta = data.metadata?.length
+    ? `${data.metadata.length} metadata key(s) attached`
+    : null;
+  return <NodeShell type="start" title={data.title || "Start"} meta={meta} selected={selected} hasInput={false} />;
+}
 
-const TaskNode = ({ data, selected }) => {
+function TaskNode({ data, selected }) {
   const parts = [
     data.assignee && `Assignee: ${data.assignee}`,
     data.dueDate  && `Due: ${data.dueDate}`,
   ].filter(Boolean);
+  return <NodeShell type="task" title={data.title || "Task"} meta={parts.join(" · ") || null} selected={selected} />;
+}
+
+function ApprovalNode({ data, selected }) {
   return (
     <NodeShell
-      type="task"
-      title={data.title || "Task"}
-      meta={parts.length ? parts.join(" · ") : null}
+      type="approval"
+      title={data.title || "Approval"}
+      meta={data.approverRole ? `Approver: ${data.approverRole}` : null}
       selected={selected}
     />
   );
-};
+}
 
-const ApprovalNode = ({ data, selected }) => (
-  <NodeShell
-    type="approval"
-    title={data.title || "Approval"}
-    meta={data.approverRole ? `Approver: ${data.approverRole}` : null}
-    selected={selected}
-  />
-);
+function AutomatedNode({ data, selected }) {
+  return (
+    <NodeShell
+      type="automated"
+      title={data.title || "Automated Step"}
+      meta={data.actionId ? `Action: ${data.actionId}` : "No action configured"}
+      selected={selected}
+    />
+  );
+}
 
-const AutomatedNode = ({ data, selected }) => (
-  <NodeShell
-    type="automated"
-    title={data.title || "Automated Step"}
-    meta={data.actionId ? `Action: ${data.actionId}` : "No action configured"}
-    selected={selected}
-  />
-);
+function EndNode({ data, selected }) {
+  const msg = data.endMessage
+    ? data.endMessage.slice(0, 48) + (data.endMessage.length > 48 ? "…" : "")
+    : null;
+  return <NodeShell type="end" title={data.title || "End"} meta={msg} selected={selected} hasOutput={false} />;
+}
 
-const EndNode = ({ data, selected }) => (
-  <NodeShell
-    type="end"
-    title={data.title || "End"}
-    meta={data.endMessage
-      ? data.endMessage.slice(0, 48) + (data.endMessage.length > 48 ? "…" : "")
-      : null}
-    selected={selected}
-    hasOutput={false}
-  />
-);
+const nodeTypes = { start: StartNode, task: TaskNode, approval: ApprovalNode, automated: AutomatedNode, end: EndNode };
 
-const nodeTypes = {
-  start:     StartNode,
-  task:      TaskNode,
-  approval:  ApprovalNode,
-  automated: AutomatedNode,
-  end:       EndNode,
-};
-
-// ── Default node data ─────────────────────────────────────────────────────────
-
-const DEFAULT_DATA = {
-  start:     { title: "Start",           metadata: [] },
-  task:      { title: "New Task",         description: "", assignee: "", dueDate: "", customFields: [] },
-  approval:  { title: "Approval",         approverRole: "", autoApproveThreshold: 0 },
-  automated: { title: "Automated Step",   actionId: "", params: {} },
-  end:       { title: "End",              endMessage: "Workflow completed.", showSummary: false },
-};
-
-let nodeCounter = 100;
-
-// ── Canvas ────────────────────────────────────────────────────────────────────
+/* Canvas  */
 
 export default function WorkflowCanvas() {
   const {
@@ -219,13 +158,13 @@ export default function WorkflowCanvas() {
     deleteEdge,
   } = useStore();
 
-  const rfRef = useRef(null);
+  const rfInstance = useRef(null);
 
   const onConnect = useCallback((params) => {
     setEdges(addEdge({
       ...params,
       animated: true,
-      style: { stroke: "#4f46e5", strokeWidth: 2 },
+      style:     { stroke: "#4f46e5", strokeWidth: 2 },
       markerEnd: { type: MarkerType.ArrowClosed, color: "#4f46e5" },
     }, edges));
   }, [edges, setEdges]);
@@ -240,8 +179,8 @@ export default function WorkflowCanvas() {
       return;
     }
 
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const position = rfRef.current.project({
+    const bounds   = event.currentTarget.getBoundingClientRect();
+    const position = rfInstance.current.project({
       x: event.clientX - bounds.left,
       y: event.clientY - bounds.top,
     });
@@ -261,17 +200,17 @@ export default function WorkflowCanvas() {
     if (window.confirm("Delete this connection?")) deleteEdge(edge.id);
   }, [deleteEdge]);
 
-  const onPaneClick = useCallback(() => setSelectedNodeId(null), [setSelectedNodeId]);
-
-  const miniMapNodeColor = (n) => ACCENT[n.type] || "#9ca3af";
+  const onPaneClick = useCallback(() => {
+    setSelectedNodeId(null);
+  }, [setSelectedNodeId]);
 
   return (
-    <div style={{ flex: 1, height: "100%" }}>
+    <div className="canvas-wrapper">
       <ReactFlow
         nodes={nodes.map((n) => ({ ...n, selected: n.id === selectedNodeId }))}
         edges={edges}
         nodeTypes={nodeTypes}
-        onInit={(inst) => (rfRef.current = inst)}
+        onInit={(instance) => (rfInstance.current = instance)}
         onNodesChange={(changes) => setNodes(applyNodeChanges(changes, nodes))}
         onEdgesChange={(changes) => setEdges(applyEdgeChanges(changes, edges))}
         onConnect={onConnect}
@@ -283,32 +222,16 @@ export default function WorkflowCanvas() {
         fitView
         proOptions={{ hideAttribution: true }}
         defaultEdgeOptions={{
-          animated: true,
-          style: { stroke: "#4f46e5", strokeWidth: 2 },
+          animated:  true,
+          style:     { stroke: "#4f46e5", strokeWidth: 2 },
           markerEnd: { type: MarkerType.ArrowClosed, color: "#4f46e5" },
         }}
       >
-        <Background
-          gap={20}
-          size={1}
-          color="#e5e7eb"
-        />
-        <Controls
-          style={{
-            background: "#fff",
-            border: "1px solid #e5e7eb",
-            borderRadius: 8,
-            boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-          }}
-        />
+        <Background gap={20} size={1} color="#e5e7eb" />
+        <Controls />
         <MiniMap
-          nodeColor={miniMapNodeColor}
+          nodeColor={(n) => ACCENT[n.type] || "#9ca3af"}
           maskColor="rgba(243,244,246,0.8)"
-          style={{
-            background: "#fff",
-            border: "1px solid #e5e7eb",
-            borderRadius: 8,
-          }}
         />
       </ReactFlow>
     </div>

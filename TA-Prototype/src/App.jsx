@@ -1,16 +1,16 @@
-import WorkflowCanvas  from "./components/WorkflowCanvas";
-import NodeSidebar     from "./components/NodeSidebar";
-import NodeFormPanel   from "./components/NodeFormPanel";
-import SandboxPanel    from "./components/SandboxPanel";
-import { useStore }    from "./store";
+import WorkflowCanvas from "./components/WorkflowCanvas";
+import NodeSidebar    from "./components/NodeSidebar";
+import NodeFormPanel  from "./components/NodeFormPanel";
+import SandboxPanel   from "./components/SandboxPanel";
+import { useStore }   from "./store";
 
-function LogoIcon() {
+function BrandIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <rect x="2" y="2" width="8" height="8" rx="2" fill="#4f46e5"/>
-      <rect x="14" y="2" width="8" height="8" rx="2" fill="#4f46e5" opacity="0.5"/>
-      <rect x="2" y="14" width="8" height="8" rx="2" fill="#4f46e5" opacity="0.5"/>
-      <rect x="14" y="14" width="8" height="8" rx="2" fill="#4f46e5" opacity="0.3"/>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <rect x="2"  y="2"  width="8" height="8" rx="2" fill="#4f46e5" />
+      <rect x="14" y="2"  width="8" height="8" rx="2" fill="#4f46e5" opacity="0.5" />
+      <rect x="2"  y="14" width="8" height="8" rx="2" fill="#4f46e5" opacity="0.5" />
+      <rect x="14" y="14" width="8" height="8" rx="2" fill="#4f46e5" opacity="0.3" />
     </svg>
   );
 }
@@ -19,103 +19,40 @@ export default function App() {
   const { nodes, edges } = useStore();
 
   return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      height: "100vh",
-      fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-    }}>
+    <div className="app">
 
-      {/* Top toolbar */}
-      <header style={{
-        height: 48,
-        background: "#fff",
-        borderBottom: "1px solid #e5e7eb",
-        display: "flex",
-        alignItems: "center",
-        padding: "0 16px",
-        gap: 10,
-        flexShrink: 0,
-        zIndex: 10,
-      }}>
-        {/* Brand */}
-        <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
-          <LogoIcon />
+      <header className="toolbar">
+        <div className="toolbar-brand">
+          <div className="toolbar-brand-icon">
+            <BrandIcon />
+          </div>
           <div>
-            <div style={{
-              fontSize: 13,
-              fontWeight: 700,
-              color: "#111827",
-              lineHeight: 1,
-              letterSpacing: "-0.01em",
-            }}>
-              HR Workflow Designer
-            </div>
-            <div style={{ fontSize: 9, color: "#9ca3af", letterSpacing: "0.05em", marginTop: 1 }}>
-              Visual Process Builder
-            </div>
+            <div className="toolbar-brand-title">HR Workflow Designer</div>
+            <div className="toolbar-brand-subtitle">Visual Process Builder</div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div style={{ width: 1, height: 24, background: "#e5e7eb", margin: "0 6px" }} />
+        <div className="toolbar-divider" />
 
-        {/* Stats pills */}
-        <div style={{ display: "flex", gap: 6 }}>
-          {[
-            { label: "Nodes", value: nodes.length },
-            { label: "Edges", value: edges.length },
-          ].map(({ label, value }) => (
-            <div key={label} style={{
-              fontSize: 11,
-              color: "#6b7280",
-              background: "#f3f4f6",
-              borderRadius: 99,
-              padding: "2px 10px",
-              fontWeight: 600,
-            }}>
-              {value} {label}
-            </div>
-          ))}
+        <div className="toolbar-stats">
+          <span className="stat-pill">{nodes.length} Nodes</span>
+          <span className="stat-pill">{edges.length} Edges</span>
         </div>
 
-        <div style={{ flex: 1 }} />
+        <div className="toolbar-spacer" />
 
-        {/* Prototype badge */}
-        <div style={{
-          fontSize: 9,
-          fontWeight: 700,
-          color: "#4f46e5",
-          background: "#eef2ff",
-          border: "1px solid #c7d2fe",
-          borderRadius: 99,
-          padding: "3px 10px",
-          textTransform: "uppercase",
-          letterSpacing: "0.08em",
-        }}>
-          Prototype
-        </div>
+        <span className="prototype-badge">Prototype</span>
       </header>
 
-      {/* Body */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+      <div className="app-body">
         <NodeSidebar />
         <WorkflowCanvas />
-
-        {/* Right panel */}
-        <aside style={{
-          width: 280,
-          borderLeft: "1px solid #e5e7eb",
-          background: "#fff",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          flexShrink: 0,
-        }}>
+        <aside className="right-panel">
           <NodeFormPanel />
           <SandboxPanel />
         </aside>
       </div>
+
     </div>
   );
 }

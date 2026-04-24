@@ -1,3 +1,10 @@
+/* ═══════════════════════════════════════════════════════════
+   HR Workflow Designer — Global Stylesheet
+   All component styles live here. JSX files use classNames only.
+═══════════════════════════════════════════════════════════ */
+
+/* ── Reset & Base ─────────────────────────────────────────── */
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -15,7 +22,105 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── Sidebar ────────────────────────────────────────────────────── */
+/* ── Layout ───────────────────────────────────────────────── */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ── Toolbar ──────────────────────────────────────────────── */
+
+.toolbar {
+  height: 48px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 10px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.toolbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.toolbar-brand-icon {
+  width: 32px;
+  height: 32px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toolbar-brand-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.toolbar-brand-subtitle {
+  font-size: 9px;
+  color: #9ca3af;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background: #e5e7eb;
+  margin: 0 6px;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.toolbar-stats {
+  display: flex;
+  gap: 6px;
+}
+
+.stat-pill {
+  font-size: 11px;
+  color: #6b7280;
+  background: #f3f4f6;
+  border-radius: 99px;
+  padding: 2px 10px;
+  font-weight: 600;
+}
+
+.prototype-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #4f46e5;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 99px;
+  padding: 3px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────── */
 
 .sidebar {
   width: 175px;
@@ -29,6 +134,16 @@ body {
   border-right: 1px solid #1f2937;
 }
 
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+  padding-left: 2px;
+}
+
 .sidebar-item {
   padding: 9px 10px;
   margin-bottom: 6px;
@@ -37,41 +152,628 @@ body {
   cursor: grab;
   display: flex;
   align-items: center;
+  gap: 8px;
   transition: background 0.12s;
   user-select: none;
   border: 1px solid #374151;
+  border-left-width: 3px; /* accent color set inline — only the value changes per node */
 }
 
 .sidebar-item:hover  { background: #374151; }
 .sidebar-item:active { cursor: grabbing; background: #4b5563; }
 
-/* ── Inputs ─────────────────────────────────────────────────────── */
-
-input, select, textarea, button {
-  font-family: inherit;
+.sidebar-item-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e5e7eb;
+  letter-spacing: 0.01em;
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus,
-select:focus,
-textarea:focus {
+.sidebar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sidebar-guide {
+  border-top: 1px solid #1f2937;
+  padding-top: 14px;
+  margin-top: auto;
+}
+
+.sidebar-guide-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.sidebar-guide-line {
+  font-size: 11px;
+  color: #4b5563;
+  line-height: 1.8;
+}
+
+/* ── Right Panel (aside) ──────────────────────────────────── */
+
+.right-panel {
+  width: 280px;
+  border-left: 1px solid #e5e7eb;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ── Node Form Panel ──────────────────────────────────────── */
+
+.form-panel-empty {
+  padding: 28px 20px;
+  text-align: center;
+  color: #9ca3af;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.form-panel-empty-icon {
+  width: 36px;
+  height: 36px;
+  background: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+
+.form-panel-empty-title {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.form-panel-empty-hint {
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.form-panel {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.form-panel-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* background-color set inline per node type accent */
+}
+
+.form-panel-header-type {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  /* color set inline per node type accent */
+}
+
+.form-panel-header-id {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-top: 2px;
+  font-family: 'Fira Code', 'Courier New', monospace;
+}
+
+.form-panel-header-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.form-panel-body {
+  padding: 14px 14px 4px;
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+/* ── Form Primitives ──────────────────────────────────────── */
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 5px;
+}
+
+.field-hint {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.field-input {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 12px;
+  font-family: inherit;
+  color: #111827;
+  background: #fff;
+  line-height: 1.4;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field-input:focus {
   outline: none;
-  border-color: #4f46e5 !important;
+  border-color: #4f46e5;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
 }
 
-/* ── ReactFlow overrides ────────────────────────────────────────── */
+.field-textarea {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 12px;
+  font-family: inherit;
+  color: #111827;
+  background: #fff;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field-textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.field-select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 12px;
+  font-family: inherit;
+  color: #111827;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field-select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.field-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.field-checkbox {
+  width: 14px;
+  height: 14px;
+  accent-color: #4f46e5;
+  cursor: pointer;
+}
+
+/* ── Key-Value Editor ─────────────────────────────────────── */
+
+.kv-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.kv-input {
+  flex: 1;
+  padding: 5px 7px;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  font-size: 11px;
+  font-family: inherit;
+  color: #111827;
+  background: #fff;
+  min-width: 0;
+}
+
+.kv-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.12);
+}
+
+.kv-remove-btn {
+  background: none;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  border-radius: 5px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: background 0.12s;
+}
+
+.kv-remove-btn:hover {
+  background: #fef2f2;
+}
+
+.kv-add-btn {
+  width: 100%;
+  padding: 6px 0;
+  background: none;
+  border: 1px dashed #d1d5db;
+  color: #6b7280;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 2px;
+  font-family: inherit;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.kv-add-btn:hover {
+  border-color: #4f46e5;
+  color: #4f46e5;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+
+.btn {
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.12s, opacity 0.12s;
+  line-height: 1;
+}
+
+.btn-ghost {
+  background: none;
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+  padding: 4px 9px;
+  font-size: 12px;
+}
+
+.btn-ghost:hover {
+  background: #f3f4f6;
+}
+
+.btn-danger {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+.btn-danger:hover {
+  background: #fee2e2;
+}
+
+.btn-primary {
+  background: #4f46e5;
+  border: none;
+  color: #fff;
+  padding: 6px 16px;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #4338ca;
+}
+
+.btn-primary:disabled {
+  background: #c7d2fe;
+  cursor: not-allowed;
+}
+
+/* ── Sandbox Panel ────────────────────────────────────────── */
+
+.sandbox-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sandbox-header {
+  padding: 12px 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sandbox-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: 0.01em;
+}
+
+.sandbox-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 14px;
+  margin-top: 4px;
+}
+
+.sandbox-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #9ca3af;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-family: inherit;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.sandbox-tab.active {
+  color: #4f46e5;
+  border-bottom-color: #4f46e5;
+}
+
+.sandbox-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+}
+
+.sandbox-json {
+  background: #f9fafb;
+  border-radius: 7px;
+  padding: 10px 12px;
+  margin: 0;
+  font-size: 10px;
+  overflow-x: auto;
+  line-height: 1.7;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  font-family: 'Fira Code', 'Courier New', monospace;
+}
+
+/* Sandbox empty state */
+
+.sandbox-empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 32px 0;
+}
+
+.sandbox-empty-icon {
+  width: 36px;
+  height: 36px;
+  background: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+
+.sandbox-empty-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.sandbox-empty-hint {
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.sandbox-loading {
+  text-align: center;
+  color: #4f46e5;
+  padding: 32px 0;
+  font-size: 12px;
+}
+
+/* Sandbox result banner */
+
+.sandbox-banner {
+  border-radius: 7px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sandbox-banner.success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #15803d;
+}
+
+.sandbox-banner.error {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+}
+
+/* Simulation step rows */
+
+.step-row {
+  display: flex;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.step-status-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.step-status-dot.success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+}
+
+.step-status-dot.error {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+}
+
+.step-label {
+  font-weight: 700;
+  color: #111827;
+  font-size: 11px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.step-type-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: #f3f4f6;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.step-message {
+  color: #6b7280;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* ── Canvas ───────────────────────────────────────────────── */
+
+.canvas-wrapper {
+  flex: 1;
+  height: 100%;
+}
+
+/* ── Custom Nodes ─────────────────────────────────────────── */
+
+.workflow-node {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  font-size: 12px;
+  min-width: 170px;
+  max-width: 220px;
+  font-family: inherit;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.workflow-node.selected {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  /* border-color and box-shadow glow set inline — value depends on per-type accent color */
+}
+
+.node-type-bar {
+  border-radius: 9px 9px 0 0;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* background and border-bottom set inline per accent color */
+}
+
+.node-type-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  /* background set inline per accent color */
+}
+
+.node-type-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  /* color set inline per accent color */
+}
+
+.node-body {
+  padding: 9px 11px 11px;
+}
+
+.node-title {
+  font-weight: 700;
+  color: #111827;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.node-title.has-meta {
+  margin-bottom: 4px;
+}
+
+.node-meta {
+  font-size: 10px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* ── ReactFlow Library Overrides ──────────────────────────── */
 
 .react-flow__controls {
   box-shadow: none !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  overflow: hidden;
 }
 
 .react-flow__controls-button {
   background: #fff !important;
-  border-color: #e5e7eb !important;
+  border: none !important;
+  border-bottom: 1px solid #e5e7eb !important;
   color: #374151 !important;
   box-shadow: none !important;
+}
+
+.react-flow__controls-button:last-child {
+  border-bottom: none !important;
 }
 
 .react-flow__controls-button:hover {
@@ -80,13 +782,21 @@ textarea:focus {
 
 .react-flow__minimap {
   box-shadow: none !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  overflow: hidden;
 }
 
 .react-flow__edge-path {
   stroke-width: 2;
 }
 
-/* ── Scrollbar ──────────────────────────────────────────────────── */
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke-width: 3;
+  cursor: pointer;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
 
 ::-webkit-scrollbar        { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track  { background: transparent; }
