@@ -1,0 +1,116 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+  background: #f9fafb;
+}
+
+/* LEFT SIDEBAR */
+.sidebar {
+  width: 200px;
+  background: #111827;
+  color: white;
+  padding: 15px;
+}
+
+/* CENTER CANVAS */
+.react-flow {
+  flex: 1;
+  background: #f3f4f6;
+}
+
+/* RIGHT PANEL */
+.right-panel {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #ddd;
+  background: #ffffff;
+}
+/* Layout */
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 180px;
+  background: #1f2937;
+  color: white;
+  padding: 10px;
+}
+
+.sidebar-item {
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #374151;
+  border-radius: 6px;
+  cursor: grab;
+  text-transform: capitalize;
+}
+
+.sidebar-item:hover {
+  background: #4b5563;
+}
+
+/* Panel */
+.panel {
+  width: 260px;
+  background: #ffffff;
+  border-left: 1px solid #ddd;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+/* Inputs */
+input, select {
+  width: 100%;
+  padding: 6px;
+  margin: 6px 0;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Button */
+button {
+  padding: 8px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+/* Nodes */
+.node {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  min-width: 100px;
+  text-align: center;
+}
+
+.start { background: #d1fae5; }
+.task { background: #e0f2fe; }
+.approval { background: #fef3c7; }
+.automated { background: #ede9fe; }
+.end { background: #fee2e2; }
+.node {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.panel {
+  border-radius: 8px;
+}.panel {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
